@@ -20,7 +20,7 @@ namespace LandOceanMaskTests
             GZipStream stream = new GZipStream(File.OpenRead("CruDataMask.bf"), CompressionMode.Decompress, false);
             DataMaskAnalyzer mask = new DataMaskAnalyzer(stream);
 
-            Assert.AreEqual(1.0,mask.GetDataPercentage(10, 11, 10, 11));
+            Assert.AreEqual(1.0, mask.GetDataPercentage(10, 11, 10, 11));
         }
 
         [TestMethod]
@@ -45,12 +45,10 @@ namespace LandOceanMaskTests
             DataMaskAnalyzer mask = new DataMaskAnalyzer(stream);
 
             string[] URIs = new string[] {
-            @"msds:nc?file=\\vienna.mslab.cs.msu.su\ClimateData\WorldClimCur3.nc&openMode=readOnly",
-            @"msds:nc?file=D:\ClimateData\WorldClimCurr.nc&openMode=readOnly",
-            @"msds:nc?file=C:\ClimateData\WorldClimCurr.nc&openMode=readOnly",
-            @"msds:az?name=WorldClimCurrent&DefaultEndpointsProtocol=http&AccountName=fetch&AccountKey=1Y0EOrnCX6ULY8c3iMHg9rrul2BWbPHKsHUceZ7SSh+ShM/q9K0ml49gQm+PE7G7i7zCvrpuT/vT1aHzEArutw=="};
+                @"msds:nc?file=C:\Users\dmitr\Desktop\fc_dump\blobs\net-cdf\WorldClimCurr.nc&openMode=readOnly"
+            };
             DataSet d = null;
-            foreach(string uri in URIs)
+            foreach (string uri in URIs)
             {
                 try
                 {
@@ -119,7 +117,7 @@ namespace LandOceanMaskTests
             for (int i = 0; i <= 1000; ++i)
                 for (int j = 0; j <= 1000; ++j)
                     if (tmeanSquare[i, j] != missingValue) ++land;
-            double ans = ((double) land) / (1001 * 1001);
+            double ans = ((double)land) / (1001 * 1001);
             Assert.AreEqual(ans, mask.GetDataPercentage(lat[10000], lat[11000], lon[10000], lon[11000]));
         }
     }

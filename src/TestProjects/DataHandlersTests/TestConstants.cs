@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace Microsoft.Research.Science.FetchClimate2.Tests
 {
@@ -11,7 +12,7 @@ namespace Microsoft.Research.Science.FetchClimate2.Tests
         public const double FloatPrecision = 1e-5;
         public const double DoublePrecision = 1e-13;
 
-        
+
         public static readonly string UriCru;
         public static readonly string UriReanalysisRegular;
         public static readonly string UriReanalysisGauss;
@@ -24,47 +25,23 @@ namespace Microsoft.Research.Science.FetchClimate2.Tests
 
         public static readonly string CloudServiceURI = @"http://fetchclimate2.cloudapp.net";
 
-        static TestConstants()
-        {
-            switch (Environment.MachineName.ToLower())
-            {
-                case "quadro":
-                    UriCru = @"D:\ClimateData\cru2_wo_strings_with_variograms.nc?openMode=readOnly";
-                    UriReanalysisRegular = @"D:\ClimateData\ReanalysisRegular_with_variograms.nc?openMode=readOnly";
-                    UriReanalysisGauss = @"D:\ClimateData\ReanslysisGaussT62_with_variograms.nc?openMode=readOnly";
-                    UriWorldClim = @"D:\ClimateData\WorldClimCurr_with_variograms.nc?openMode=readOnly";
-                    UriEtopo = @"D:\ClimateData\ETOPO1_Ice_g_gmt4_with_variograms.nc?openMode=readOnly";
-                    UriGtopo = @"D:\ClimateData\GTOPO30_with_variograms.nc?openMode=readOnly";
-                    UriCpc = @"D:\ClimateData\soilw.mon.mean.v2_with_variograms.nc?openMode=readOnly";
-                    UriHADCM3_sra_tas = @"D:\ClimateData\HADCM3_SRA1B_1_N_tas_1-2399.nc?openMode=readOnly";
-                    UriGHCN = @"D:\ClimateData\GHCNv2_201107_wo_strings.nc?openMode=readOnly";
-                    break;
+        public static readonly string NetCDFDataSetsFolder = @"C:\Users\dmitr\Desktop\fc_dump\blobs\net-cdf";
 
-                case "cockroach":
-                //    UriCru = @"C:\ClimateData\cru2_wo_strings_with_variograms.nc?openMode=readOnly";
-                //    UriReanalysisRegular = @"C:\ClimateData\ReanalysisRegular_with_variograms.nc?openMode=readOnly";
-                //    UriReanalysisGauss = @"C:\ClimateData\ReanslysisGaussT62_with_variograms.nc?openMode=readOnly";
-                //    UriWorldClim = @"C:\ClimateData\WorldClimCurr_with_variograms.nc?openMode=readOnly";
-                //    UriEtopo = @"C:\ClimateData\ETOPO1_Ice_g_gmt4_with_variograms.nc?openMode=readOnly";
-                    UriGtopo = @"C:\ClimateData\GTOPO30.nc?openMode=readOnly";
-                //    UriCpc = @"C:\ClimateData\soilw.mon.mean.v2_with_variograms.nc?openMode=readOnly";
-                //    UriHADCM3_sra_tas = @"C:\ClimateData\HADCM3_SRA1B_1_N_tas_1-2399.nc?openMode=readOnly";
-                //    UriGHCN = @"C:\ClimateData\GHCNv2_201107_wo_strings.nc?openMode=readOnly";
-                    break;
-
-                default:
-                    UriCru = @"msds:memory"; //no azure dataset availalbe
-                    UriReanalysisRegular = @"msds:az?id=72&DefaultEndpointsProtocol=http&AccountName=fc2chunkedstorage&AccountKey=dnPQl1Zjwpzm2qLPW/J9MFrhPWYocz3h/2zzuQ+RxCTE+ClFfKIriu4aCwJpPt+P6sU8hJfiWfQaBYc4nDSY/Q==";
-                    UriReanalysisGauss = @"msds:az?name=ReanalysisGaussT62&DefaultEndpointsProtocol=http&AccountName=fc2chunkedstorage&AccountKey=dnPQl1Zjwpzm2qLPW/J9MFrhPWYocz3h/2zzuQ+RxCTE+ClFfKIriu4aCwJpPt+P6sU8hJfiWfQaBYc4nDSY/Q==";       
-                    UriWorldClim = @"msds:az?name=WorldClimCurrent&DefaultEndpointsProtocol=http&AccountName=fc2chunkedstorage&AccountKey=dnPQl1Zjwpzm2qLPW/J9MFrhPWYocz3h/2zzuQ+RxCTE+ClFfKIriu4aCwJpPt+P6sU8hJfiWfQaBYc4nDSY/Q==";
-                    UriEtopo = @"msds:az?name=ETOPO1&DefaultEndpointsProtocol=http&AccountName=fc2chunkedstorage&AccountKey=dnPQl1Zjwpzm2qLPW/J9MFrhPWYocz3h/2zzuQ+RxCTE+ClFfKIriu4aCwJpPt+P6sU8hJfiWfQaBYc4nDSY/Q==";
-                    UriGtopo = @"msds:az?name=gtopo30&DefaultEndpointsProtocol=http&AccountName=fc2chunkedstorage&AccountKey=dnPQl1Zjwpzm2qLPW/J9MFrhPWYocz3h/2zzuQ+RxCTE+ClFfKIriu4aCwJpPt+P6sU8hJfiWfQaBYc4nDSY/Q==";
-                    UriCpc = @"msds:az?name=CpcSoilMoisture&DefaultEndpointsProtocol=http&AccountName=fc2chunkedstorage&AccountKey=dnPQl1Zjwpzm2qLPW/J9MFrhPWYocz3h/2zzuQ+RxCTE+ClFfKIriu4aCwJpPt+P6sU8hJfiWfQaBYc4nDSY/Q==";
-                    UriHADCM3_sra_tas = @"msds:az?AccountName=fc2chunkedstorage&AccountKey=dnPQl1Zjwpzm2qLPW/J9MFrhPWYocz3h/2zzuQ+RxCTE+ClFfKIriu4aCwJpPt+P6sU8hJfiWfQaBYc4nDSY/Q==&DefaultEndpointsProtocol=http&name=HADCM3_SRA1B";
-                    UriGHCN = @"msds:az?AccountName=fc2chunkedstorage&AccountKey=dnPQl1Zjwpzm2qLPW/J9MFrhPWYocz3h/2zzuQ+RxCTE+ClFfKIriu4aCwJpPt+P6sU8hJfiWfQaBYc4nDSY/Q==&DefaultEndpointsProtocol=http&name=GHCNv2";
-                    break;
-            }
+        private static string FullDsPath(string relURI) {
+            return System.IO.Path.Combine(NetCDFDataSetsFolder, relURI);
         }
 
+        static TestConstants()
+        {            
+            UriCru = FullDsPath(@"cru2_wo_strings_with_variograms.nc?openMode=readOnly");
+            UriReanalysisRegular = FullDsPath(@"ReanalysisRegular_with_variograms.nc?openMode=readOnly");
+            UriReanalysisGauss = FullDsPath(@"ReanslysisGaussT62_with_variograms.nc?openMode=readOnly");
+            UriWorldClim = FullDsPath(@"WorldClimCurr_with_variograms.nc?openMode=readOnly");
+            UriEtopo = FullDsPath(@"ETOPO1_Ice_g_gmt4_with_variograms.nc?openMode=readOnly");
+            UriGtopo = FullDsPath(@"GTOPO30_with_variograms.nc?openMode=readOnly");
+            UriCpc = FullDsPath(@"soilw.mon.mean.v2_with_variograms.nc?openMode=readOnly");
+            UriHADCM3_sra_tas = FullDsPath(@"HADCM3_SRA1B_1_N_tas_1-2399.nc?openMode=readOnly");
+            UriGHCN = FullDsPath(@"GHCNv2_201107_wo_strings.nc?openMode=readOnly");
+        }
     }
 }
