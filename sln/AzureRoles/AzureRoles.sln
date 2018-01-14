@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{10A1565E-3371-4EF4-8362-B9CCE5174E6F}"
 EndProject
@@ -32,6 +32,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceLogs", "..\..\src\Service\ServiceLogs\ServiceLogs.csproj", "{83DAF40A-E450-4770-ABD7-434D2ABD994A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssemblyStore", "..\..\src\Libraries\AzureGAC\AssemblyStore.csproj", "{4FDDF3C1-12E2-497C-8A71-669666300154}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Standalone", "..\..\src\Service\Standalone\Standalone.csproj", "{D507070D-FFAF-45FF-BFDB-A7FC22AA83F9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -118,6 +120,12 @@ Global
 		{4FDDF3C1-12E2-497C-8A71-669666300154}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4FDDF3C1-12E2-497C-8A71-669666300154}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4FDDF3C1-12E2-497C-8A71-669666300154}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D507070D-FFAF-45FF-BFDB-A7FC22AA83F9}.CodePlex|Any CPU.ActiveCfg = Release|Any CPU
+		{D507070D-FFAF-45FF-BFDB-A7FC22AA83F9}.CodePlex|Any CPU.Build.0 = Release|Any CPU
+		{D507070D-FFAF-45FF-BFDB-A7FC22AA83F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D507070D-FFAF-45FF-BFDB-A7FC22AA83F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D507070D-FFAF-45FF-BFDB-A7FC22AA83F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D507070D-FFAF-45FF-BFDB-A7FC22AA83F9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
