@@ -46,7 +46,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\..\ext\nuget\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\..\ext\nuget\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
@@ -92,6 +92,10 @@
     <ProjectReference Include="..\..\Core\FetchCommon\FetchCore.csproj">
       <Project>{bb21ad9b-37c3-4120-8ac5-236153a85e89}</Project>
       <Name>FetchCore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Libraries\FetchConfigProvider\FetchConfigProvider.csproj">
+      <Project>{20f6738f-0655-4c08-bd2d-53a6f621206a}</Project>
+      <Name>FetchConfigProvider</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Libraries\FetchRequest\FetchStructures.csproj">
       <Project>{c5bb5e4f-a9e8-41e0-bc8b-fbecc24f8e27}</Project>
