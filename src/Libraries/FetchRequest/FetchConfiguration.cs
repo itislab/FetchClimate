@@ -56,12 +56,11 @@ namespace Microsoft.Research.Science.FetchClimate2
 
     public class DataSourceDefinition : IDataSourceDefinition
     {
-        public DataSourceDefinition(ushort id, string name, string description, string copyright, string location, string[] providedVariables)
+        public DataSourceDefinition(ushort id, string name, string description, string copyright, string[] providedVariables)
         {
             this.ID = id;
             this.Name = name;
-            this.Description = description;
-            this.Location = location;
+            this.Description = description;            
             this.Copyright = copyright;
             this.ProvidedVariables = providedVariables;
         }
@@ -89,7 +88,7 @@ namespace Microsoft.Research.Science.FetchClimate2
         /// <summary>
         /// The service URI that provides the data source
         /// </summary>
-        public string Location { get; internal set; }
+        //public string Location { get; internal set; }
 
         /// <summary>
         /// The variables that can be fetched from the data source

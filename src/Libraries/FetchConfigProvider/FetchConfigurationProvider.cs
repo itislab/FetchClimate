@@ -129,7 +129,7 @@ namespace Microsoft.Research.Science.FetchClimate2
     /// <summary>
     /// Describes the datasource including mapping
     /// </summary>
-    public class ExtendedDataSourceDefinition : DataSourceDefinition
+    public class NameMappedDataSourceDefinition : DataSourceDefinition
     {
         readonly Dictionary<string, string> envToDsMapping = new Dictionary<string, string>();
         readonly Dictionary<string, string> dsToEnvMapping = new Dictionary<string, string>();
@@ -152,8 +152,63 @@ namespace Microsoft.Research.Science.FetchClimate2
             }
         }
 
+        public NameMappedDataSourceDefinition(ushort id, string name, string description, string copyright, string[] providedEvnVariables, Dictionary<string, string> envToDsVarNameMapping)
+            :base(id,name,description,copyright,providedEvnVariables)
+        {
+            foreach (var item in envToDsVarNameMapping)
+            {
+                envToDsMapping[item.Key] = item.Value;
+                dsToEnvMapping[item.Value] = item.Key;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Describes the data sources that performs computations locally (with some DataHandler)
+    /// </summary>
+    public class LocalDataSourceDefinition : NameMappedDataSourceDefinition {
+        public LocalDataSourceDefinition(ushort id, string name, string description, string copyright, string uri, string handlerTypeName, string[] providedEvnVariables, Dictionary<string, string> envToDsVarNameMapping)
+            : base(id,name,description,copyright,providedEvnVariables,envToDsVarNameMapping) {
+            this.Uri = uri;
+            this.HandlerTypeName = handlerTypeName;
+            }
+
+        /// <summary>
+        /// The URI of Dmitrov Data set to access the data
+        /// </summary>
+        public string Uri { get; internal set; }
+
+        /// <summary>
+        /// The name of the class (full class name, including assembly name) that must be invoked to process the requests with the data source
+        /// </summary>
+        public string HandlerTypeName { get; internal set; }
+    }
+
+    [Obsolete("Use local or remote data source definition instead")]
+    public class ExtendedDataSourceDefinition : DataSourceDefinition
+    {
+        readonly Dictionary<string, string> envToDsMapping = new Dictionary<string, string>();
+        readonly Dictionary<string, string> dsToEnvMapping = new Dictionary<string, string>();
+
+
+
+        public Dictionary<string, string> EnvToDsMapping
+        {
+            get
+            {
+                return envToDsMapping;
+            }
+        }
+
+        public Dictionary<string, string> DsToEnvMapping
+        {
+            get
+            {
+                return dsToEnvMapping;
+            }
+        }
         public ExtendedDataSourceDefinition(ushort id, string name, string description, string copyright, string uri, string handlerTypeName,string[] providedEvnVariables,string serviceURI, Dictionary<string, string> envToDsVarNameMapping,string remoteName,ushort remoteId)
-            : base(id, name, description, copyright,serviceURI, providedEvnVariables)
+            : base(id, name, description, copyright, providedEvnVariables)
         {
             Uri = uri;            
             HandlerTypeName = handlerTypeName;
@@ -164,7 +219,7 @@ namespace Microsoft.Research.Science.FetchClimate2
             {
                 envToDsMapping[item.Key] = item.Value;
                 dsToEnvMapping[item.Value] = item.Key;
-            }            
+            }
         }
         
         /// <summary>
@@ -199,6 +254,7 @@ namespace Microsoft.Research.Science.FetchClimate2
         /// </summary>
         public ushort RemoteDataSourceID { get; internal set; }
     }
+    
 
     /// <summary>
     /// The factory of ExtendedConfiguration using LINQ-to-SQL

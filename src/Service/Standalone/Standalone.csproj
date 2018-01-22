@@ -75,10 +75,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Constants.cs" />
+    <Compile Include="Controllers\ComputeController.cs" />
     <Compile Include="Controllers\ConfigurationController.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="StaticConfiguration.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -92,6 +95,10 @@
     <ProjectReference Include="..\..\Core\FetchCommon\FetchCore.csproj">
       <Project>{bb21ad9b-37c3-4120-8ac5-236153a85e89}</Project>
       <Name>FetchCore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Core\FetchDiagnostics\FetchDiagnostics.csproj">
+      <Project>{f99548e8-95a5-4e41-a303-781651432f43}</Project>
+      <Name>FetchDiagnostics</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Libraries\FetchConfigProvider\FetchConfigProvider.csproj">
       <Project>{20f6738f-0655-4c08-bd2d-53a6f621206a}</Project>
