@@ -29,7 +29,19 @@ namespace Standalone
                 routeTemplate: "api/configuration/{timestamp}",
                 defaults: new { controller = "Configuration", timestamp = RouteParameter.Optional }
             );
-            
+
+            config.Routes.MapHttpRoute(
+                name: "Compute",
+                routeTemplate: "api/compute",
+                defaults: new { controller = "Compute" }
+            );
+
+            config.Routes.MapHttpRoute(
+                name: "Data",
+                routeTemplate: "jsproxy/data/{uri}/{variables}",
+                defaults: new { controller = "Proxy", uri = string.Empty, variables = string.Empty }
+            );
+
             return config;
         }
     }

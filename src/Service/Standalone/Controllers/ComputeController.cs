@@ -1,6 +1,9 @@
-﻿using Microsoft.Research.Science.FetchClimate2;
+﻿using Microsoft.Research.Science.Data;
+using Microsoft.Research.Science.FetchClimate2;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -12,7 +15,7 @@ namespace Standalone.Controllers
 {
     /// <summary>Handler POST request to Compute endpoint</summary>
     public class ComputeController : ApiController
-    {
+    {        
         public static readonly AutoRegistratingTraceSource ControllerTrace = new AutoRegistratingTraceSource("ComputeController");
         
         // GET api/Compute
@@ -24,11 +27,14 @@ namespace Standalone.Controllers
             });
         }
 
+        public readonly string ResultsFolderPath = "Results";
+
         // POST api/Compute
         public string Post(Microsoft.Research.Science.FetchClimate2.Serializable.FetchRequest request)
         {
             try
             {
+                Stopwatch sw = Stopwatch.StartNew();
                 var fetchRequest = request.ConvertFromSerializable();
 
                 string errorMsg;
@@ -37,6 +43,18 @@ namespace Standalone.Controllers
 
                 string hash = fetchRequest.GetSHAHash();
                 ControllerTrace.TraceInfo("{0}: Hash is computed for request", hash);
+
+                string resultFilePath = Path.Combine(ResultsFolderPath, string.Format("{0}.nc", hash));
+                string dsURI = string.Format("msds:nc?file={0}", resultFilePath);
+                string dsReadURI = dsURI + "&openMode=readOnly";
+                //cache lookup
+                if (File.Exists(resultFilePath))
+                {
+                    sw.Stop();                   
+                    return string.Format("completed={0}", dsReadURI);
+                }
+
+                
 
                 var dataSources = StaticConfiguration.GetDataSources();
                 IFetchConfiguration configuration = new FetchConfiguration(DateTime.Now, dataSources, StaticConfiguration.ActiveVariables);
@@ -49,13 +67,25 @@ namespace Standalone.Controllers
                 var feConst = feType.GetConstructor(new Type[1] { typeof(IExtendedConfigurationProvider) });
                 if (feConst == null)
                     throw new InvalidOperationException("The FE constrictor with needed signature is not found. Are the currently running service assemblies and math assemblies from AzureGAC built with different Core assemblies?");
-                var fe = (IFetchEngine)feConst.Invoke(new object[1] { configProvider });                
+                IExtendedConfigurationProvider configProvider = new StaticExtendedConfigurationProvider();
+                var fe = (IFetchEngine)feConst.Invoke(new object[1] { configProvider });
+                var result = fe.PerformRequestAsync(fetchRequest).Result;
 
+                if (!Directory.Exists(ResultsFolderPath))
+                    Directory.CreateDirectory(ResultsFolderPath);
+                
+                
+                string dsWriteURI = dsURI + "&openMode=create";
+                
+                RequestDataSetFormat.CreateCompletedRequestDataSet(dsWriteURI, fetchRequest, result.Values, result.Provenance, result.Uncertainty);
+                sw.Stop();
+                ControllerTrace.TraceInfo("Request {0} processed in {1}",hash,sw.Elapsed);
+                return string.Format("completed={0}", dsReadURI);
             }
             catch (Exception exc)
             {
                 ControllerTrace.TraceError("Request is processing error: {0}", exc.ToString());
-                return JobStatus.GetFailedStatus(exc.ToString()).ToString();
+                return string.Format("fault={0}",exc.ToString());
             }
         }
     }

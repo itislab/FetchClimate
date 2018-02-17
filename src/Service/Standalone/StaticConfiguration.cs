@@ -31,19 +31,32 @@ namespace Standalone
             new VariableDefinition("wvsp","hPa","Water vapour saturation pressure")
             };
 
+        private static string GetDataSetURL(string filename) {
+            return string.Format(@"msds:nc?file=C:\Users\dmitr\Desktop\fc_dump\blobs\net-cdf\{0}&openMode=readOnly", filename);
+        }
+
         public static LocalDataSourceDefinition[] GetDataSources()
         {
-            Dictionary<string, string> cruNameMappings = new Dictionary<string, string>();
-            cruNameMappings.Add("airt", "tmp");
-            cruNameMappings.Add("prate", "pre");
-            cruNameMappings.Add("relhum", "reh");
-            cruNameMappings.Add("dtr", "dtr");
-            cruNameMappings.Add("frs", "frs");
-            cruNameMappings.Add("wet", "rd0");
-            cruNameMappings.Add("sunp", "sunp");
-            cruNameMappings.Add("windspeed", "wnd");
-            cruNameMappings.Add("relhum_land", "reh");
-            cruNameMappings.Add("airt_land", "tmp");
+            Dictionary<string, string> cruEnv2DsNameMappings = new Dictionary<string, string>();
+            cruEnv2DsNameMappings.Add("airt", "tmp");
+            cruEnv2DsNameMappings.Add("prate", "pre");
+            cruEnv2DsNameMappings.Add("relhum", "reh");
+            cruEnv2DsNameMappings.Add("dtr", "dtr");
+            cruEnv2DsNameMappings.Add("frs", "frs");
+            cruEnv2DsNameMappings.Add("wet", "rd0");
+            cruEnv2DsNameMappings.Add("sunp", "sunp");
+            cruEnv2DsNameMappings.Add("windspeed", "wnd");
+            cruEnv2DsNameMappings.Add("relhum_land", "reh");
+            cruEnv2DsNameMappings.Add("airt_land", "tmp");
+
+            Dictionary<string,string> reanalysisTempEnv2DsNameMappings = new Dictionary<string, string>();
+            reanalysisTempEnv2DsNameMappings.Add("airt","air");
+            reanalysisTempEnv2DsNameMappings.Add("airt_land", "air");
+
+            Dictionary<string, string> worldclimEnv2DsNameMappings = new Dictionary<string, string>();
+            worldclimEnv2DsNameMappings.Add("airt", "tmean");
+            worldclimEnv2DsNameMappings.Add("airt_land", "tmean");
+            worldclimEnv2DsNameMappings.Add("prate", "prec");
 
             LocalDataSourceDefinition[] ActiveDataSources = {
             new LocalDataSourceDefinition(
@@ -51,12 +64,32 @@ namespace Standalone
                 "CRU CL 2.0",
                 "High-resolution grid of the average climate in the recent past",
                 "Produced by Climatic Research Unit (University of East Anglia). http://www.cru.uea.ac.uk",
-                "cru2_wo_strings_with_variograms.nc",
+                GetDataSetURL("cru2_wo_strings_with_variograms.nc"),
                 "Microsoft.Research.Science.FetchClimate2.DataSources.CruCl20DataHandler, CRUCL2DataSource, Version=2.1.20342.0, Culture=neutral, PublicKeyToken=null",
                 new string[] { "airt","prate","relhum","dtr","frs","wet","sunp","windspeed","relhum_land","airt_land"},
-                cruNameMappings
-            )
-                /*
+                cruEnv2DsNameMappings
+            ),
+            new LocalDataSourceDefinition(
+                 6,
+                "NCEP/NCAR Reanalysis 1 (regular grid)",
+                "The NCEP/NCAR Reanalysis 1 project is using a state-of-the-art analysis/forecast system to perform data assimilation using past data from 1948 to the present",
+                "NCEP Reanalysis data provided by the NOAA/OAR/ESRL PSD, Boulder, Colorado, USA, from their Web site at http://www.esrl.noaa.gov/psd/",
+                GetDataSetURL("ReanalysisRegular_with_variograms.nc"),
+                "Microsoft.Research.Science.FetchClimate2.DataSources.NCEPReanalysisRegularGridDataHandler, NCEPReanalysisDataSource, Version=2.1.20337.0, Culture=neutral, PublicKeyToken=null",
+                new string[] { "airt" },
+                reanalysisTempEnv2DsNameMappings
+                ),
+            new LocalDataSourceDefinition(
+                2,
+                "WorldClim 1.4",
+                "A set of global climate layers (climate grids) with a spatial resolution of a square kilometer",
+                "The database is documented in this article: Hijmans, R.J., S.E. Cameron, J.L. Parra, P.G. Jones and A. Jarvis, 2005. Very high resolution interpolated climate surfaces for global land areas. International Journal of Climatology 25: 1965-1978.",
+                GetDataSetURL("WorldClimCurr_with_variograms.nc"),
+                "Microsoft.Research.Science.FetchClimate2.WorldClim14DataSource, WorldClim14DataSource, Version=2.1.20342.0, Culture=neutral, PublicKeyToken=null",
+                new string[] { "airt","prate","airt_land"},
+                worldclimEnv2DsNameMappings
+                )
+                /*(
             new ExtendedDataSourceDefinition(
                 2,
                 "WorldClim 1.4",
@@ -110,17 +143,7 @@ namespace Standalone
                 0
             ),
             new ExtendedDataSourceDefinition(
-                6,
-                "NCEP/NCAR Reanalysis 1 (regular grid)",
-                "The NCEP/NCAR Reanalysis 1 project is using a state-of-the-art analysis/forecast system to perform data assimilation using past data from 1948 to the present",
-                "NCEP Reanalysis data provided by the NOAA/OAR/ESRL PSD, Boulder, Colorado, USA, from their Web site at http://www.esrl.noaa.gov/psd/",
-                "http://fcdatasets.blob.core.windows.net/net-cdf/ReanalysisRegular_with_variograms.nc",
-                "Microsoft.Research.Science.FetchClimate2.DataSources.NCEPReanalysisRegularGridDataHandler, NCEPReanalysisDataSource, Version=2.1.20337.0, Culture=neutral, PublicKeyToken=null",
-                null,
-                null,
-                null,
-                null,
-                0
+               
             ),
             new ExtendedDataSourceDefinition(
                 7,
@@ -214,6 +237,38 @@ namespace Standalone
             };
 
             return ActiveDataSources;
+        }
+    }
+
+    public class StaticExtendedConfigurationProvider : IExtendedConfigurationProvider
+    {
+        private readonly DateTime confTime = new DateTime(2018, 1, 1);
+
+        private static ExtendedDataSourceDefinition LocalToExtended(LocalDataSourceDefinition local) {
+            return new ExtendedDataSourceDefinition(
+                local.ID,
+                local.Name,
+                local.Description,
+                local.Copyright,
+                local.Uri,
+                local.HandlerTypeName,
+                local.ProvidedVariables,
+                null,
+                local.EnvToDsMapping,
+                null,
+                0
+                );
+        }
+
+        public ExtendedConfiguration GetConfiguration(DateTime utcTime)
+        {
+            var dataSources = StaticConfiguration.GetDataSources().Select(local => LocalToExtended(local)).ToArray();
+            return new ExtendedConfiguration(confTime, dataSources, StaticConfiguration.ActiveVariables);
+        }
+
+        public DateTime GetExactTimestamp(DateTime utcTimestamp)
+        {
+            return confTime;
         }
     }
 }

@@ -150,10 +150,10 @@ namespace Microsoft.Research.Science.FetchClimate2
             {
                 return dsToEnvMapping;
             }
-        }
+        }        
 
         public NameMappedDataSourceDefinition(ushort id, string name, string description, string copyright, string[] providedEvnVariables, Dictionary<string, string> envToDsVarNameMapping)
-            :base(id,name,description,copyright,providedEvnVariables)
+            :base(id,name,description,copyright,null,providedEvnVariables)
         {
             foreach (var item in envToDsVarNameMapping)
             {
@@ -208,7 +208,7 @@ namespace Microsoft.Research.Science.FetchClimate2
             }
         }
         public ExtendedDataSourceDefinition(ushort id, string name, string description, string copyright, string uri, string handlerTypeName,string[] providedEvnVariables,string serviceURI, Dictionary<string, string> envToDsVarNameMapping,string remoteName,ushort remoteId)
-            : base(id, name, description, copyright, providedEvnVariables)
+            : base(id, name, description, copyright,null, providedEvnVariables)
         {
             Uri = uri;            
             HandlerTypeName = handlerTypeName;
